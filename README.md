@@ -1,5 +1,5 @@
 
-#PKB instructions
+# PKB instructions
 
 This article provides an instruction for using the **PKB** (Pathway-based Kernel Boosting) model to analyze cancer genomic datasets. PKB is designed to perform classification, regression, or survival analysis on datasets from typical cancer genomic studies. It utilizes cancer patients' **clinical features** (e.g. age, gender, tumor stage, etc), and **gene expression** profile, to predict the outcome variable, which can be **categorical** (e.g. metastasis status), **continuous** (e.g. drug response, tumor size), or **survival** (e.g. overall survival, disease free survival). It also incorporates gene pathway information to improve prediction accuracy, and provides more interpretable results.
 
@@ -221,8 +221,12 @@ We use the resulting figures and tables from the previous survival analysis as a
 
 
 ### Tables
-1. `opt_weights.txt`:    
-a table showing the optimal weights of all pahtways. It is sorted in descending order. The first column are pathways, and the second column are correponding weights.
+1. `clinical_weights.txt` ( created only if `-clinical` is specified ):    
+a table showing the coefficients of clinical predictors. It is sorted in descending order of the absolute coefficient values. 
+
+2. `pathway_weights.txt`
+a table showing the final weights of all pathways. It is sorted in descending order. The first column are pathways, and the second column are correponding weights.
+
 
 ### Pickle file
 1. `results.pckl`:   

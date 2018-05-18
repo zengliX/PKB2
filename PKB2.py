@@ -35,6 +35,7 @@ args = parser.parse_args()
 # ██ ██  ██  ██ ██      ██    ██ ██   ██    ██
 # ██ ██      ██ ██       ██████  ██   ██    ██
 import numpy as np
+import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import assist
@@ -210,6 +211,17 @@ if __name__ == "__main__":
     f2.savefig(inputs.output_folder + "/group_weights_path.pdf")
     if inputs.hasClinical:
         f3.savefig(inputs.output_folder + "/clinical_weights_path.pdf")
+
+    # write weights file
+    df_Gweights = pd.Series(G_weights, index = outputs.inputs.group_names)
+    df_Gweights.sort_values(ascending=False, inplace=True)
+    df_Gweights.to_csv(inputs.output_folder + "/pathway_weights.txt")
+    if inputs.hasClinical:
+        df_Cweights = pd.Series(C_weights, index = outputs.inputs.clin_names).to_frame(name = 'original')
+        df_Cweights['abs'] = np.abs(df_Cweights.original)
+        df_Cweights.sort_values(by='abs',ascending=False,inplace=True)
+        df_Cweights = df_Cweights.drop('abs',axis=1).squeeze()
+        df_Cweights.to_csv(inputs.output_folder + "/clinical_weights.txt")
 
 
     # ███████  █████  ██    ██ ███████
