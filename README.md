@@ -173,7 +173,7 @@ optional arguments:
 The outputs will be saved in the `output`-folder.	
 Below we provide more detailed explanations to selected parameters:
 
-- `predictor, predictor_set, response, -clinical`   	 
+- `predictor, predictor_set, response, -clinical`	   
    represent paths to the files for gene expression, pathways, outcome variable, and clinical predictors, respectively. The paths are **relative paths to the `input` folder**. So if the files are in the `input` folder, you can just use their names.
 - `kernel`	      
 	Currently, we only support radial basis function (rbf) and polynomial kernels (`polyd` for polynomial kernel with degree `d`) 
@@ -181,7 +181,7 @@ Below we provide more detailed explanations to selected parameters:
 	Penalty parameter used in the regularized loss function, to control complexity of selected base learners. If left blank, we will use an automatic procedure to calculate a feasible `Lambda`
 - `pen`	  	
 	**Penalty multiplier**. The auto-calculated Lambda usually put too strong penalty. You can use the penalty multiplier `pen` to reduce it `Lambda*pen`
-- `test`	   	
+- `test`	      	
 	Test label file, which contains the sample IDs to be used as testing data. Refer to `example/*/test_label.txt` for example. The samples included in the file will be used as testing data, and will not be used to train the model.
 
 ## <a name=results></a> Results interpretation
