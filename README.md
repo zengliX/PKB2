@@ -1,3 +1,4 @@
+
 #PKB instructions
 
 This article provides an instruction for using the **PKB** (Pathway-based Kernel Boosting) model to analyze cancer genomic datasets. PKB is designed to perform classification, regression, or survival analysis on datasets from typical cancer genomic studies. It utilizes cancer patients' **clinical features** (e.g. age, gender, tumor stage, etc), and **gene expression** profile, to predict the outcome variable, which can be **categorical** (e.g. metastasis status), **continuous** (e.g. drug response, tumor size), or **survival** (e.g. overall survival, disease free survival). It also incorporates gene pathway information to improve prediction accuracy, and provides more interpretable results.
@@ -99,7 +100,7 @@ Example:
 | ...     | ...   | ...   | ...   | ...   | ... |
 
 ### Pathway input
-You can either provide your own pathway file, or use the built-in files, including  **KEGG, Biocarta, GO Biological Process pathways**. 
+You can either provide your own pathway file, or use the built-in files, including  **KEGG, Biocarta**, and **GO Biological Process pathways**. 
 
 To use the built-in pathways, just use the corresponding files in `./pathways` folder when running PKB.
 
@@ -124,42 +125,104 @@ Follow the steps below in order to run PKB on your own computer (we use our toy 
 	git clone https://github.com/zengliX/PKB2 PKB2
 	cd PKB2
 	```
-2. prepare datasets and configuration files following the format given in the previous section
+2. prepare datasets following the format given in the previous section
 
-3. run PKB: 
+3. run PKB  
 
 	```python
-	# python PKB.py path/to/your_config_file.txt
-	python PKB.py ./example/config_file.txt
+	# regression example
+	python PKB2.py regression example/regression_example regression_results \
+	expression.txt pathways.txt response.txt poly3 L2 -clinical clinical.txt \
+	-rate 0.1 -maxiter 500 -test test_label.txt -pen 0.1
+	
+	# survival example
+	python PKB2.py survival example/survival_example survival_results \
+	expression.txt pathways.txt response.txt poly3 L2 -clinical clinical.txt \
+	-rate 0.1 -maxiter 500 -test test_label.txt -pen 0.1
 	```
 
-The outputs will be saved in the `output_folder` as you specified in the configuration file.
+There a quite a few parameter you need to specify. You can access the help message by command `python PKB2.py -h`. The following message will be displayed:
+
+```
+usage: PKB2.py [-h] [-clinical CLINICAL] [-maxiter MAXITER] [-rate RATE]
+               [-Lambda LAMBDA] [-test TEST] [-pen PEN] [-weights WEIGHTS]
+               problem input output predictor predictor_set response kernel
+               method
+
+positional arguments:
+  problem             type of analysis (classification/regression/survival)
+  input               Input folder
+  output              Output folder
+  predictor           predictor file
+  predictor_set       file that specifies predictor group structure
+  response            outcome data file
+  kernel              kernel function (rbf/poly3)
+  method              regularization (L1/L2)
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -clinical CLINICAL  file of clinical predictors
+  -maxiter MAXITER    maximum number of iteration (default 800)
+  -rate RATE          learning rate parameter (default 0.05)
+  -Lambda LAMBDA      penalty parameter
+  -test TEST          file containing test data index
+  -pen PEN            penalty multiplier
+  -weights WEIGHTS    file with gene weights
+```
+
+The outputs will be saved in the `output`-folder.	
+Below we provide more detailed explanations to selected parameters:
+
+- `predictor, predictor_set, response, -clinical`	 
+   represent paths to the files for gene expression, pathways, outcome variable, and clinical predictors, respectively. The paths are **relative paths to the `input` folder**. So if the files are in the `input` folder, you can just use their names.
+- `kernel`	
+	Currently, we only support radial basis function (rbf) and polynomial kernels (`polyd` for polynomial kernel with degree `d`) 
+- `Lambda`	
+	Penalty parameter used in the regularized loss function, to control complexity of selected base learners. If left bland, we will use an automatic procedure to calculate a feasible `Lambda`
+- `pen`		
+	**Penalty multiplier**. The auto-calculated Lambda usually put too strong penalty. You can use the penalty multiplier `pen` to reduce it `Lambda*pen`
+- `test`		
+	Test label file, which contains the sample IDs to be used as testing data. Refer to `example/*/test_label.txt` for example. The samples included in the file will be used as testing data, and will not be used to train the model.
 
 ## <a name=results></a> Results interpretation
+We use the resulting figures and tables from the previous survival analysis as an example.
 
 ### Figures
-1. `CV_err.png, CV_loss.png`:    
-present classifcation error and loss function value at each iteration of the cross validation process
-![](example/example_output/CV_err.png?raw=true)
-![](example/example_output/CV_loss.png?raw=true)
+1. `CV_loss.pdf` (left) and  `loss.pdf` (right)   
+
+	- The CV loss figure presents the curve loss when performing 3-folder CV on training data. The iteration reaching bottom of the curve is used to train the whole training dataset.
+	- The loss figure present both training and testing loss curves when fitting the whole training dataset.
+
+	<table> 
+	<tr><td><img src="figures/CV_loss.pdf"></td> 
+   	  <td><img src="figures/loss.pdf"></td> 
+	</tr> 
+	</table> 
+
+2. `clinical_weights_path.pdf`, clinical feature coefficients at each iteration (left)   
+  `clinical_weights.pdf`, clinical feature coefficients in the final model (right)    
+  
+	<table> 
+	<tr><td><img src="figures/clinical_weights_path.pdf"></td> 
+   	  <td><img src="figures/clinical_weights.pdf"></td> 
+	</tr> 
+	</table> 
 
 
-2. `opt_weights.png`:    
-shows the estimated pathways weights fitted using our boosting model
-![](example/example_output/opt_weights.png?raw=true)
+3. `group_weights_path.pdf`, pathway weights in each iteration (left)   
+	`group_weights_path.pdf`, pathway weights in the final model (right)
 
+	<table> 
+	<tr><td><img src="figures/group_weights_path.pdf"></td> 
+   	  <td><img src="figures/group_weights.pdf"></td> 
+	</tr> 
+	</table> 
 
-3. `weights_path.png`:    
-shows the changes of pathways' weights as iteration number increases.
-![](example/example_output/weights_path.png?raw=true)
 
 
 ### Tables
 1. `opt_weights.txt`:    
 a table showing the optimal weights of all pahtways. It is sorted in descending order. The first column are pathways, and the second column are correponding weights.
-
-2. `test_prediction.txt`:   
-the predicted outcome values, if `test_file` is provided in the configuration file.
 
 ### Pickle file
 1. `results.pckl`:   
