@@ -203,8 +203,8 @@ We use the resulting figures and tables from the previous survival analysis as a
   `clinical_weights.pdf`, clinical feature coefficients in the final model (right)    
   
 	<table> 
-	<tr><td><img src="figures/clinical_weights_path.pdf"></td> 
-   	  <td><img src="figures/clinical_weights.pdf"></td> 
+	<tr><td><img src="figures/clinical_weights_path.png"></td> 
+   	  <td><img src="figures/clinical_weights.png"></td> 
 	</tr> 
 	</table> 
 
@@ -213,8 +213,8 @@ We use the resulting figures and tables from the previous survival analysis as a
 	`group_weights_path.pdf`, pathway weights in the final model (right)
 
 	<table> 
-	<tr><td><img src="figures/group_weights_path.pdf"></td> 
-   	  <td><img src="figures/group_weights.pdf"></td> 
+	<tr><td><img src="figures/group_weights_path.png"></td> 
+   	  <td><img src="figures/group_weights.png"></td> 
 	</tr> 
 	</table> 
 
