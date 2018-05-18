@@ -194,8 +194,8 @@ We use the resulting figures and tables from the previous survival analysis as a
 	- The loss figure present both training and testing loss curves when fitting the whole training dataset.
 
 	<table> 
-	<tr><td><img src="figures/CV_loss.pdf"></td> 
-   	  <td><img src="figures/loss.pdf"></td> 
+	<tr><td><img src="figures/CV_loss.png"></td> 
+   	  <td><img src="figures/loss.png"></td> 
 	</tr> 
 	</table> 
 
